@@ -1,9 +1,11 @@
 {
-  "name": "Qobuz-s-Bitch-Mother",
+  "id": "qobuz-bacardii-hires",
+  "name": "Qobuz’s bitch",
+  "version": "1.4.2",
   "author": "bacardii",
-  "description": "Strict 24-bit Hi-Res only Qobuz (No 16-bit)",
-  "version": "1.5",
-  "category": "streaming",
-  "url": "https://github.com/hatestarr/Qobuz-s-Bitch-Mother/raw/main/Qobuz-s-Bitch-Mother.js",
-  "type": "source"
-}
+  "description": "Strict 24-bit Hi-Res Qobuz module",
+  "labels": ["HI-RES", "24-BIT", "QOBUZ", "STRICT"],
+
+  "BASE_URL": "https://www.qobuz.com/api.json/0.2",
+
+  "searchTracks": "async (query, limit = 15) => {\n  try {\n    const encoded = encodeURIComponent(query);\n    const url = `${this.BASE_URL}/catalog/search?query=${encoded}&type=tracks&limit=${limit}`;\n    const data = await this.fetchWithTimeout(url);\n\n    if (!data.tracks?.items?.length) return { tracks: [], total: 0 };\n\n    const filtered = data.tracks.items\n      .filter(item => this.isHiRes(item))\n      .map(item => ({\n        id: item.id.toString(),\n        title: item.title,\n        artist: item.performer?.name || 'Unknown',\n        album: item.album?.title || '',\n        duration: item.duration,\n        albumCover: item.album?.image?.large || '',\n        audioQuality: 'HI_RES'\n      }));\n\n    return { tracks: filtered.slice(0, limit), total: filtered.length };\n  } catch (e) {\n    console.error('[Qobuz Bitch] Search error:', e.message);\n    return { tracks: [], total: 0 };\n  }\n}",
